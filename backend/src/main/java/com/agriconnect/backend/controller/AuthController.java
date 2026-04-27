@@ -1,5 +1,7 @@
 package com.agriconnect.backend.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +29,8 @@ import com.agriconnect.backend.security.UserPrincipal;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
@@ -41,7 +45,9 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> registerUser(@Validated @RequestBody SignupRequest signupRequest) {
+        logger.info("Attempting signup for email={}", signupRequest.getEmail());
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            logger.warn("Signup failed: email already exists {}", signupRequest.getEmail());
             return ResponseEntity.badRequest().build();
         }
 
@@ -61,6 +67,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
+        logger.info("Signup successful for email={}", signupRequest.getEmail());
         return ResponseEntity.ok(buildAuthResponse(jwt, user));
     }
 

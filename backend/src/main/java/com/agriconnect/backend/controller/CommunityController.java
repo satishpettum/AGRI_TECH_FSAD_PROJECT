@@ -3,6 +3,8 @@ package com.agriconnect.backend.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,8 @@ import com.agriconnect.backend.security.UserPrincipal;
 @RequestMapping("/api/community")
 public class CommunityController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CommunityController.class);
+
     private final CommunityPostRepository communityPostRepository;
 
     public CommunityController(CommunityPostRepository communityPostRepository) {
@@ -37,10 +41,12 @@ public class CommunityController {
     public ResponseEntity<CommunityPost> createCommunityPost(@Validated @RequestBody CommunityPostRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() instanceof String) {
+            logger.warn("Community post creation denied: unauthenticated request");
             return ResponseEntity.status(401).build();
         }
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        logger.info("Creating community post for user={}", principal.getUsername());
         CommunityPost post = new CommunityPost(
                 request.getTitle(),
                 request.getCategory(),

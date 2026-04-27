@@ -19,7 +19,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-The backend runs on `http://localhost:8081`.
+The backend runs on `http://localhost:8080`.
 
 ## API Endpoints
 
