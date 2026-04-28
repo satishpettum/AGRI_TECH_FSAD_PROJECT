@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import { ROLE_CONFIG } from '@/lib/roleConfig';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Header() {
   const { user, signOut, role } = useAuth();
@@ -83,11 +84,12 @@ export default function Header() {
               </Button>
             </> :
 
-          <>
+            <>
               <Link to="/login"><Button variant="ghost" size="sm">Sign In</Button></Link>
               <Link to="/signup"><Button size="sm">Get Started</Button></Link>
             </>
           }
+          <ThemeToggle />
         </div>
 
         {/* Mobile toggle */}
